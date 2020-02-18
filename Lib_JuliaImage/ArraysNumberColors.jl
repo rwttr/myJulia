@@ -37,3 +37,14 @@ dump(imgc[1,1])
 c = imgc[1,1]; 
 # accssing  r g b fields by red(), green(), blue()
 (red(c), green(c), blue(c))
+
+# with other color channel order
+dump(convert(BGR, c))
+
+# colors: fixed-point numbers
+c24 = rand(RGB{N0f8},2,2)
+r = red(c24[1,1])
+
+typeof(r) # fixed-point integer
+
+# N0f8 cannot represent values outside 0 to 1 range
