@@ -1,5 +1,4 @@
 # array of Numbers
-
 img = rand(2,2) # Float64
 a = [1,2,3,4]   # Int64
 
@@ -48,3 +47,13 @@ r = red(c24[1,1])
 typeof(r) # fixed-point integer
 
 # N0f8 cannot represent values outside 0 to 1 range
+
+using FixedPointNumbers
+#highest val: typemax
+#unit in last place (ulp) : eps
+(typemax(N0f8), eps(N0f8))
+(typemax(N0f16), eps(N0f16))
+
+# for 12bit camera N4f12 store in 16bit numbers
+
+# N0f8 can be overflow
