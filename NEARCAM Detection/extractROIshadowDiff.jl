@@ -6,6 +6,7 @@ function extractROIshadowDiff(fnameRGB1,fnameRGB2)
     rgb1_gray = Gray.(rgb1);
     rgb2_gray = Gray.(rgb2);
 
+    # ---------- Trunk Segmentation -----------
     # Remove Holes within Trunk
     I_trunk = binarize(rgb1_gray,Otsu());    
     I_trunk2 = imfill(.!Bool.(I_trunk),(0,2000));
@@ -15,6 +16,7 @@ function extractROIshadowDiff(fnameRGB1,fnameRGB2)
     rgb1_masked = convert(Array{Float32},rgb1_gray.*I_trunk_mask);
     rgb2_masked = convert(Array{Float32},rgb2_gray.*I_trunk_mask);
 
+    # ---------- Image Diff -----------
     # Normalize Brightness : Recenter mean at 0 Value
     # Valid pixel locations on trunk
     trunk_validpx = findall(Bool.(I_trunk_mask));
@@ -40,10 +42,9 @@ function extractROIshadowDiff(fnameRGB1,fnameRGB2)
         end
     end
 
-    # K-means (input = row vector)
-    nnz_rgb_diff = sparse(rgb_diff);
-    
+    # -------------- K-means (input = row vector) -----------------    
     # Initial Centroids
+    nnz_rgb_diff = sparse(rgb_diff);  
     initial_centroid = [0;mean(nnz_rgb_diff.nzval);maximum(rgb_diff)]';
     R = kmeans!(rgb_diff', initial_centroid; maxiter=100, display=:none);
 
@@ -62,8 +63,11 @@ function extractROIshadowDiff(fnameRGB1,fnameRGB2)
     I_output = rgb1_gray.*0;
     I_output[R_pick] .= 1;
 
-    ##
+    # ------------ Preprocessing : Median Filter 3x3 ----------------
     I_output = rgb1_gray.*0;
     I_output[trunk_validpx] .= resultpx;
+    I_output = Bool.(I_output);
+    I_output = mapwindow(median,I_output,(3,3))
+    # Return Binary
     return I_output
 end
