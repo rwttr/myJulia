@@ -60,8 +60,8 @@ function extractROIshadowDiff(fnameRGB1, fnameRGB2)
     resultpx[pick_idx] .= 1;
 
 
-    I_output = rgb1_gray .* 0;
-    I_output[R_pick] .= 1;
+    #I_output = rgb1_gray .* 0;
+    #I_output[R_pick] .= 1;
 
     # ------------ Preprocessing : Median Filter 3x3 ----------------
     I_output = rgb1_gray .* 0;

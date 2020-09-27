@@ -1,11 +1,13 @@
 module NEARCAM
-export extractROIshadowDiff,
-extractLowEdge,extractROILowEdge,
-extractTapline,detectTapline
+using Images, ImageSegmentation, FileIO, ImageBinarization
 
-function extractROIshadowDiff()
-    println("this is my function1")
-end
+include("extractROIshadowDiff.jl")
+export extractROIshadowDiff,
+extractLowEdge,
+extractROILowEdge,
+extractTapline,
+detectTapline
+
 
 function extractLowEdge()
     println("this is my function2")
