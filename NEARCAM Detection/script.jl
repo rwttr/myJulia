@@ -1,13 +1,21 @@
+### REPL 
 using ImageView
 
- ############## Load Image Section #############
+############## Load Image Section #############
 using Images, ImageBinarization,
  LinearAlgebra, Statistics, SparseArrays, Clustering
 
 rgb1 = load("RGB-1.png");
 rgb2 = load("RGB-2.png");
 
- ############# Segmentation1 Section ###########
+############# Segmentation1 Section ###########
+"""
+Segmentation1 : load RGB1 and RGB2 Images -
+- Trunk segmentation using Otsu'
+- Equalize Mean of Gray Values in Both images 
+- Subtraction and Clustering High-diff
+- Clean up noise with post-processing
+"""
 rgb1_gray = Gray.(rgb1);
 rgb2_gray = Gray.(rgb2);
 
@@ -22,8 +30,8 @@ I_trunk_mask = Gray.(.!I_trunk2);
 rgb1_masked = convert(Array{Float32}, rgb1_gray .* I_trunk_mask);
 rgb2_masked = convert(Array{Float32}, rgb2_gray .* I_trunk_mask);
 
-# Normalize Brightness : Recenter mean at 0 Value
-# Valid pixel locations on trunk
+#= Normalize Brightness : Recenter mean at 0 Value
+Valid pixel locations on trunk =#
 trunk_validpx = findall(Bool.(I_trunk_mask));
 
 rgb1_validpx = rgb1_masked[trunk_validpx];
@@ -48,7 +56,6 @@ for i in eachindex(rgb_diff)
 end
 
 # K-means (input = row vector)
-
 # R = kmeans(rgb_diff', 3; maxiter=20, display=:iter, init=[0;mean(rgb_diff);maximum(rgb_diff)])
 # R = kmeans(rgb_diff', 3; maxiter=20, display=:iter);
 nnz_rgb_diff = sparse(rgb_diff);
@@ -67,14 +74,14 @@ resultpx = rgb_diff;
 resultpx[bg_idx] .= 0;
 resultpx[pick_idx] .= 1;
 
-
 #I_output = rgb1_gray .* 0;
 #I_output[R_pick] .= 1;
 
 ##
 I_output = rgb1_gray .* 0;
 I_output[trunk_validpx] .= resultpx;
-I_output;
+I_output; # Output Image
+##
 # I_output[trunk_validpx] .= rgb_diff;
 
 ##########################################################
@@ -87,7 +94,13 @@ du16_masked =
 SobelKn = KernelFactors.sobel;
 # Image Gradient
 Gy, Gx = imgradients(du8_masked,SobelKn, "replicate");
+
 ##########################################################
 
 ########## Segmentation: 2 ############
 
+# connected component labelling 
+I_label =label_components(I_output, trues(3,3));
+
+# no of connected component
+(max_label, ) = findmax(I_label);
