@@ -1,5 +1,6 @@
 module NEARCAM
-using Images, ImageSegmentation, FileIO, ImageBinarization
+using Images, ImageSegmentation, FileIO, ImageBinarization, SparseArrays,
+Clustering
 
 include("extractROIshadowDiff.jl")
 export extractROIshadowDiff,

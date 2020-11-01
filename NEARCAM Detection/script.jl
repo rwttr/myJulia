@@ -104,3 +104,4 @@ I_label =label_components(I_output, trues(3,3));
 
 # no of connected component
 (max_label, ) = findmax(I_label);
+
